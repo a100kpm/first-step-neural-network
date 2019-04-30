@@ -1,18 +1,12 @@
 import numpy as np
 import csv
-import os
-from tqdm import tqdm
 import math
 
 import random
-import pandas as pd
-from sklearn import preprocessing
-from collections import deque
-import numpy as np
 import time
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense,Dropout,LSTM,CuDNNLSTM,BatchNormalization
+from tensorflow.keras.layers import Dense,Dropout,CuDNNLSTM,BatchNormalization
 from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint
 
 def preprocess_data_collected(collected,collected_y,factor):
