@@ -526,6 +526,7 @@ def human_player(step=200):
             
         observation, reward, done, info = env.step(action)
         print(observation)
+        print('step=',t)
         if len(prev_obs)>0:
             memory.append([prev_obs,action])
         prev_obs=observation
