@@ -125,9 +125,6 @@ def add_data_to_equilibrium(data_separe,class_size,List_proportion):
             if float(new_data[0][6])>0:
                 val4=-val4
             for j in new_data:
-#                if abs(float(j[3]))>1:
-#                    print('i=',i,'val5=',val5)
-#                    input()
                 j[3]=float(j[3])
                 j[3]+=val1
                 j[3]=str(j[3])
@@ -188,9 +185,6 @@ def normalyze_factor_table(a,start_col=3):
 def normalyze_factor_table2(data_separe,start_col=3):
     lenn=np.shape(data_separe[0][0][0])[0]
     List=[[float(x),float(x)] for x in data_separe[0][0][0][start_col:]]
-#    for i in range(9):
-#        for j in range(List_proportion[i]):
-#            for k in range(128):
     for i in data_separe:
         for j in i:
             for k in j:
@@ -254,24 +248,7 @@ def add_label(data_no_label,dict_target,len_target):
     
     random.shuffle(result)
     return result
-    
-
-# =============================================================================
-class_size=800
-a=collecte()
-b=collecte_y()
-List1=normalyze_factor_table(a)
-List_proportion=find_proportion(b)
-data_separe=class_data(a,b)
-data_separe=add_data_to_equilibrium(data_separe,class_size,List_proportion)
-List=normalyze_factor_table2(data_separe)
-factor=factor_to_normalyze(List)     
-data_separe=normalyze_data(data_separe,factor)
-
-dict_target,len_target=process_y(b)
-data_label=add_label(data_separe,dict_target,len_target)
-# =============================================================================
-    
+        
 def separate_data(data,pourcent=20):
     random.shuffle(data)
     lenn=len(data)
@@ -300,10 +277,27 @@ def separate_data(data,pourcent=20):
     
     
     
-    
-    
+# =============================================================================
+# PREPARE DATA  
+# =============================================================================
+class_size=800
+a=collecte()
+b=collecte_y()
+List1=normalyze_factor_table(a)
+List_proportion=find_proportion(b)
+data_separe=class_data(a,b)
+data_separe=add_data_to_equilibrium(data_separe,class_size,List_proportion)
+List=normalyze_factor_table2(data_separe)
+factor=factor_to_normalyze(List)     
+data_separe=normalyze_data(data_separe,factor)
+dict_target,len_target=process_y(b)
+data_label=add_label(data_separe,dict_target,len_target) 
+ 
+# =============================================================================
+# PREPARE MODEL
+# =============================================================================
 train_x,train_y,valid_x,valid_y=separate_data(data_label)
-
+EPOCHS = 2000
 
 BATCH_SIZE = 32
 NAME = f"PRED-{int(time.time())}"
@@ -313,9 +307,9 @@ model.add(CuDNNLSTM(64, input_shape=(np.shape(train_x)[1:]), return_sequences=Tr
 model.add(Dropout(0.2))
 model.add(BatchNormalization())
 
-#model.add(CuDNNLSTM(512, input_shape=(np.shape(train_x)[1:]), return_sequences=True))
-#model.add(Dropout(0.2))
-#model.add(BatchNormalization())
+model.add(CuDNNLSTM(128, input_shape=(np.shape(train_x)[1:]), return_sequences=True))
+model.add(Dropout(0.2))
+model.add(BatchNormalization())
 
 model.add(CuDNNLSTM(64, input_shape=(np.shape(train_x)[1:])))
 model.add(Dropout(0.2))
@@ -338,8 +332,6 @@ model.compile(loss='categorical_crossentropy',
               metrics=['accuracy'])
 
 
-
-EPOCHS = 1000
 tensorboard = TensorBoard(log_dir=f'logs/{NAME}')
 
 filepath= "RNN_FINALE-{epoch:02d}"
