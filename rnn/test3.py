@@ -234,17 +234,7 @@ def normalyze_data(data_separe,factor):
                     
     return data_separe
 
-# =============================================================================
-new_size_=2
-a=collecte()
-List=normalyze_factor_table(a)
-factor=factor_to_normalyze(List)
-b=collecte_y()
-List_proportion=find_proportion(b)
-data_separe=class_data(a,b)
-data_separe=normalyze_data(data_separe,factor)
-data_no_label=create_equilibre_data(data_separe,List_proportion,new_size=new_size_)
-# =============================================================================
+
 
 def process_y(target):
     dictio=dict()
@@ -272,28 +262,7 @@ def add_label(data_no_label,dict_target,len_target):
     random.shuffle(result)
     return result
 
-        
-# =============================================================================
-dict_target,len_target=process_y(b)
-data_label=add_label(data_no_label,dict_target,len_target)
-# =============================================================================
-        
 
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# # # remember about : dict_target,len_target,factor and d
-# =============================================================================
-# =============================================================================
-# =============================================================================
-        
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# # # zone shuffle and type(data) -on commence sans faire de separation entre les classes !-
-# =============================================================================
-# =============================================================================
-# =============================================================================
 def separate_data(data,pourcent=10):
     random.shuffle(data)
     lenn=len(data)
@@ -325,15 +294,24 @@ def separate_data(data,pourcent=10):
     
     
 
-
 # =============================================================================
+# PREPARE DATA
 # =============================================================================
+new_size_=2
+a=collecte()
+List=normalyze_factor_table(a)
+factor=factor_to_normalyze(List)
+b=collecte_y()
+List_proportion=find_proportion(b)
+data_separe=class_data(a,b)
+data_separe=normalyze_data(data_separe,factor)
+data_no_label=create_equilibre_data(data_separe,List_proportion,new_size=new_size_)
+dict_target,len_target=process_y(b)
+data_label=add_label(data_no_label,dict_target,len_target)
 # =============================================================================
-# # # zone model
+# PREPARE MODEL
 # =============================================================================
-# =============================================================================
-# =============================================================================
-#EPOCHS = 400
+EPOCHS = 2000
 train_x,train_y,valid_x,valid_y=separate_data(data_label)
 BATCH_SIZE = 64
 NAME = f"PRED-{int(time.time())}"
@@ -368,7 +346,6 @@ model.compile(loss='categorical_crossentropy',
 
 
 
-EPOCHS = 1000
 tensorboard = TensorBoard(log_dir=f'logs/{NAME}')
 
 filepath= "RNN_FINALE-{epoch:02d}"
@@ -384,54 +361,12 @@ history = model.fit(np.array(train_x),np.array(train_y),
 
 
 
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# # # # # ici on commence la zone pour renvoyer un resultat chez kaggle
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-
-def submit():
-    submit_data=collecte(r'C:\Users\ianni\Desktop\robot_career\career-con-2019\X_test.csv')
-    submit_data1=preprocess_data_collected(submit_data,'0',factor)
-    data=[]
-    for line in submit_data1:
-        data.append(line)
-    data1=np.array(data)
-    
-    List_result=[]
-    nbr_iter=np.shape(data1)[0]
-    
-    for i in range(nbr_iter):
-        result=np.argmax(model.predict(np.array(data1[i:i+1])))
-        for name,val in dict_target.items():
-            if val==result:
-                printer=name
-        List_result.append(printer)
-        
-        
-    List_result_submit=[]
-    List_result_submit.append(['series_id','surface'])
-    for i in range(nbr_iter):
-        List_result_submit.append([str(i),List_result[i]])
-        
-    with open('sample_submission.csv','w',newline='') as csvFile:
-        writer = csv.writer(csvFile)
-        writer.writerows(List_result_submit)
-        
-    csvFile.close()
-
 #model.load_weights(r'C:\Users\ianni\Desktop\robot_career\career-con-2019\models\RNN_FINALE-410-0.853.model')
 #tensorboard --logdir="path"
 
 
 
-def submit2():
+def submit():
     true_size=np.shape(data_label)[1]-1
     confirmation=(128-true_size)
 
@@ -450,24 +385,12 @@ def submit2():
         List=[0]*len_target
         List_raw=[]
         for j in range(128-true_size):
-#            print(j,j+true_size)
+
             result_raw=model.predict(np.array(data1[i*confirmation+j:i*confirmation+j+1]))
             result=np.argmax(result_raw)
             List[result]+=1
             List_raw.append(result_raw)
             
-#        compteur=0
-#        pos=np.argmax(List)
-#        for j in range(len_target):
-#            if List[j]==List[pos]:
-#                compteur+=1
-#        if compteur==1:
-#            for name,val in dict_target.items():
-#                if val==pos:
-#                    printer=name
-#            List_result.append(printer)
-#        else:
-#            compteur_choix+=1
         New_decider=[1]*len_target
         for j in range(np.shape(List_raw)[0]):
             for k in range(np.shape(List_raw)[2]):
