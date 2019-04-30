@@ -75,8 +75,7 @@ def initial_population():
     
     return training_data
 
-tra=initial_population()
-model = train_model(tra)
+
 
 # =============================================================================
 # https://www.youtube.com/watch?v=G-KvpNGudLw&index=61&list=PLQVvvaa0QuDfKTOs3Keq_kaG2P55YRn5v
@@ -186,7 +185,8 @@ def reinforcement_l(model,nbr=10,goal_steps=500,score_requirement=200,prev_data=
             
     return new_model,data
 
-            
+tra=initial_population()
+model = train_model(tra)  
 
 
 # =============================================================================
@@ -198,7 +198,7 @@ def reinforcement_l(model,nbr=10,goal_steps=500,score_requirement=200,prev_data=
 # =============================================================================
         
         
-    # =============================================================================
+# =============================================================================
 # training_data = initial_population()
 # model = train_model(training_data)
 # =============================================================================
@@ -208,47 +208,39 @@ def reinforcement_l(model,nbr=10,goal_steps=500,score_requirement=200,prev_data=
 #model=model.load(195.model)
 # RAPPEL!!!! IL FAUT CHARGER UN MODELE MÊME VIDE AVANT DE LOAD
 
-# =============================================================================
-# =============================================================================
-# # scores=[]
-# # choices =[]
-# # 
-# # for each_game in range(10):
-# #     score = 0
-# #     game_memory = []
-# #     prev_obs = []
-# #     env.reset()
-# #     for _ in range(goal_steps):
-# # #        env.render()
-# #         if len(prev_obs) == 0:
-# #             action = random.randrange(0,2)
-# #         else:
-# # #            np.argmax permet de changer le "[0,1] en 1 ou [1,0] en 0
-# # #            (hotmax = true)
-# #             action =np.argmax(model.predict(prev_obs.reshape(-1,len(prev_obs),1))[0])
-# #         
-# #         choices.append(action)
-# #         new_observation, reward, done ,info = env.step(action)
-# #         prev_obs = new_observation
-# #         game_memory.append([new_observation, action])
-# # #        pour  retrain ^^
-# #         score += reward
-# # #        print(score)
-# #         if done:
-# #             break
-# #     scores.append(score)
-# #     
-# # print('Average Score', sum(scores)/len(scores))
-# # print('Choice 1: {}, Choice 2: {}'.format(choices.count(1)/len(choices),
-# #       choices.count(0)/len(choices)))
-# # 
-# # env.close()
-# =============================================================================
-# =============================================================================
+scores=[]
+choices =[]
 
-#328 -->195
-#341 -->solo
-#348 -->first0
-#407 -->test1.model // saved2.npy
+for each_game in range(10):
+    score = 0
+    game_memory = []
+    prev_obs = []
+    env.reset()
+    for _ in range(goal_steps):
+        env.render()
+        if len(prev_obs) == 0:
+            action = random.randrange(0,2)
+        else:
+#            np.argmax permet de changer le "[0,1] en 1 ou [1,0] en 0
+#            (hotmax = true)
+            action =np.argmax(model.predict(prev_obs.reshape(-1,len(prev_obs),1))[0])
+        
+        choices.append(action)
+        new_observation, reward, done ,info = env.step(action)
+        prev_obs = new_observation
+        game_memory.append([new_observation, action])
+#        pour  retrain ^^
+        score += reward
+#        print(score)
+        if done:
+            break
+    scores.append(score)
+    
+print('Average Score', sum(scores)/len(scores))
+print('Choice 1: {}, Choice 2: {}'.format(choices.count(1)/len(choices),
+      choices.count(0)/len(choices)))
+
+env.close()
+
 
 
