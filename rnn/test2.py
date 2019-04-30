@@ -103,13 +103,6 @@ def factor_to_normalyze(List_):
         
 
 
-# =============================================================================
-a=collecte()
-List=normalyze_factor_table(a)
-factor=factor_to_normalyze(List)
-b=collecte_y()
-c=preprocess_data_collected(a,b,factor)
-# =============================================================================
 
 def process_y(target):
     dictio=dict()
@@ -133,27 +126,6 @@ def preprocess_data_collected_with_tag(data,dict_target,len_target):
     return data
         
         
-# =============================================================================
-dict_target,len_target=process_y(b)
-d=preprocess_data_collected_with_tag(c,dict_target,len_target)
-# =============================================================================
-        
-
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# # # remember about : dict_target,len_target,factor and d
-# =============================================================================
-# =============================================================================
-# =============================================================================
-        
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# # # zone shuffle and type(data) -on commence sans faire de separation entre les classes !-
-# =============================================================================
-# =============================================================================
-# =============================================================================
 def separate_data(data,pourcent=10):
     random.shuffle(data)
     lenn=len(data)
@@ -183,18 +155,23 @@ def separate_data(data,pourcent=10):
     
     
     
-    
+# =============================================================================
+# PREPARE DATA    
+# =============================================================================
+a=collecte()
+List=normalyze_factor_table(a)
+factor=factor_to_normalyze(List)
+b=collecte_y()
+c=preprocess_data_collected(a,b,factor)    
+dict_target,len_target=process_y(b)
+d=preprocess_data_collected_with_tag(c,dict_target,len_target)
 
+# =============================================================================
+# PREPARE MODEL
+# =============================================================================
 train_x,train_y,valid_x,valid_y=separate_data(d)
 
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# # # zone model
-# =============================================================================
-# =============================================================================
-# =============================================================================
-#EPOCHS = 400
+EPOCHS = 2000
 BATCH_SIZE = 64
 NAME = f"PRED-{int(time.time())}"
 
@@ -230,8 +207,6 @@ model.compile(loss='categorical_crossentropy',
               metrics=['accuracy'])
 
 
-
-EPOCHS = 2000
 tensorboard = TensorBoard(log_dir=f'logs/{NAME}')
 
 filepath= "RNN_FINALE-{epoch:02d}-{val_acc:.3f}"
@@ -246,49 +221,6 @@ history = model.fit(np.array(train_x),np.array(train_y),
                     callbacks=[tensorboard,checkpoint])
 
 
-
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# # # # # ici on commence la zone pour renvoyer un resultat chez kaggle
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-
-# =============================================================================
-# submit_data=collecte(r'C:\Users\ianni\Desktop\robot_career\career-con-2019\X_test.csv')
-# submit_data1=preprocess_data_collected(submit_data,'0',factor)
-# data=[]
-# for line in submit_data1:
-#     data.append(line)
-# data1=np.array(data)
-# 
-# List_result=[]
-# nbr_iter=np.shape(data1)[0]
-# 
-# for i in range(nbr_iter):
-#     result=np.argmax(model.predict(np.array(data1[i:i+1])))
-#     for name,val in dict_target.items():
-#         if val==result:
-#             printer=name
-#     List_result.append(printer)
-#     
-#     
-# List_result_submit=[]
-# List_result_submit.append(['series_id','surface'])
-# for i in range(nbr_iter):
-#     List_result_submit.append([str(i),List_result[i]])
-#     
-# with open('sample_submission.csv','w',newline='') as csvFile:
-#     writer = csv.writer(csvFile)
-#     writer.writerows(List_result_submit)
-#     
-# csvFile.close()
-# =============================================================================
 
 def submit():
     submit_data=collecte(r'C:\Users\ianni\Desktop\robot_career\career-con-2019\X_test.csv')
