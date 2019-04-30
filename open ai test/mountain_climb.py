@@ -6,19 +6,16 @@ Created on Tue Aug 14 17:39:04 2018
 """
 
 import gym
-#print(gym.envs.registry.all())
 import random
 import numpy as np
 import tflearn
 from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.estimator import regression
-from statistics import mean, median
-from collections import Counter
+
 
 import tensorflow as tf
 tf.reset_default_graph()
-#tflearn.config.init_graph()
-#LR = 1e-3
+
 env = gym.make('MountainCar-v0').env
 
 
@@ -134,10 +131,6 @@ def neural_model(input_size,keep_rate=0.8,LR=1e-3):
     return model
 
 def train_model(training_data,model=False,LR=1e-3,hm_epoch=5):
-#    training_data=training_data.reshape(-1,len(training_data[0][0]))
-#    X = np.array([i[0] for i in training_data]).reshape(-1
-#                ,len(training_data[0][0]),1)
-#    y= [i[1] for i in training_data]
     
     X = np.array([i[0] for i in training_data]).reshape(-1,len(training_data[0][0]),1)
     y= [i[1] for i in training_data]    
@@ -163,14 +156,6 @@ model = train_model(train_data_saved)
 model.save('mountain01.model')
 
 
-#X = np.array([i[0] for i in train_data_saved]).reshape(-1,len(train_data_saved[0][0]),1)
-#y= [i[1] for i in train_data_saved]
-# =============================================================================
-# model=neural_model(2)
-# model.load('mountain02.model')
-# =============================================================================
-
-
 #env = gym.make('MountainCar-v0').env
 min_i=200
 conter = 0
@@ -180,7 +165,7 @@ for each_game in range(100):
     i=0
     for _ in range(200):
         i+=1
-#        env.render()
+        env.render()
         if len(prev_obs) ==0:
             action = random.randrange(0,3)
         else:
